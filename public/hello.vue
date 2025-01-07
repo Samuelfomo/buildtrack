@@ -15,22 +15,24 @@
           <p class=" text-center text-gray-300 -pt-1 capitalize text-2xl"> Manfred MOUKATE </p>
         </header>
         <div class="p-4">
-          <p class="text-gray-400 mb-2 ">Your PIN code in required to sign in</p>
-          <div class="relative border-gray-300">
+          <p class="text-gray-400 mb-2 text-center ">Your PIN code in required to sign in</p>
+          <div class="relative border-gray-300 flex justify-center gap-2">
             <input
-                v-model="tel"
-                type="tel"
-                placeholder="699888709"
-                class="text-end w-full px-6 py-2 text-lg border-2 border-gray-300 rounded-xl bg-gray-300
-                 focus:outline-none focus:border-blue-600 focus:ring-2
-                 focus:ring-blue-200 transition duration-300
-                 placeholder-gray-600"
+              v-for="(value, index) in pin"
+              :key="index"
+              v-model="pin[index]"
+              type="text"
+              maxlength="1"
+              class="w-12 h-12 text-center text-xl border-2 border-gray-300 rounded-lg bg-gray-100
+              focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200 transition duration-300 placeholder-gray-600"
+              @input="handlePinInput(index)"
             />
-            <p v-if="errors.tel" class="text-red-600 text-sm mt-1">{{ errors.tel }}</p>
-          </div>
+        </div>
+        <p v-if="errors.pin" class="text-red-600 text-sm mt-1">{{ errors.pin }}</p>
+
           <div class="py-3 mt-5 w-full flex">
             <button
-                @click="handleSubmit"
+                @click="router.push('/')"
                 class=" text-black font-bold rounded-xl hover:text-black flex-1
             transition duration-300 capitalize"
             >
@@ -67,29 +69,37 @@ import { ref } from 'vue'
 const router = useRouter();
 
 const isLoading = ref(false);
-const tel = ref('');
+const pin = ref(['', '', '', '']);
+
 
 const errors = ref({
-  tel: ''
+  pin: ''
 });
 
-const handleSubmit = () => {
-  // Reset errors
-  errors.value = {
-    tel: ''
-  };
-
-  // Validate fields
-  if (!tel.value) {
-    errors.value.tel = 'Veuillez entrer votre numero de telephone';
-  }
-
-  // If no errors, proceed with form submission
-  if (!errors.value.tel && !errors.value.password && !errors.value.confirmed) {
-    // Add form submission logic here
-    router.push('/hello');
+const handlePinInput = (index: number) => {
+  if (pin.value[index].length === 1 && index < pin.value.length - 1) {
+    // Passer automatiquement au champ suivant
+    const nextInput = document.querySelectorAll('input')[index + 1];
+    nextInput && (nextInput as HTMLInputElement).focus();
+  } else if (pin.value[index].length === 0 && index > 0) {
+    // Revenir automatiquement au champ précédent si l'utilisateur efface
+    const prevInput = document.querySelectorAll('input')[index - 1];
+    prevInput && (prevInput as HTMLInputElement).focus();
   }
 };
+
+const handleSubmit = () => {
+  // Validation du PIN
+  if (pin.value.some((digit) => digit === '')) {
+    errors.value.pin = 'Veuillez remplir tous les champs.';
+  } else {
+    errors.value.pin = '';
+    // Traitez le PIN ici (exemple : l'envoyer au backend)
+    console.log('PIN soumis :', pin.value.join(''));
+    router.push('/');
+  }
+};
+
 
 
 
