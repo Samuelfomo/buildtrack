@@ -4,7 +4,7 @@
       <Header />
   
       <!-- Contenu principal -->
-      <main class="flex-1 bg-gray-50 p-8 grid grid-cols-2 gap-4">
+      <main class="flex-col bg-gray-50 p-8 grid grid-cols-2 gap-4">
         <!-- Carte pour Contact -->
         <Card title="Contact" description="Gestion des contacts">
           <template #icon>
